@@ -1,0 +1,350 @@
+install.packages("readxl")
+library(readxl)
+setwd("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics")
+file.choose()
+#use double slash 
+oht<-readxl::read_xlsx("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\OHT_Data.xlsx")
+names(oht)
+#1st to indicate which object from the population   -> calculate the mean from the 
+mean(oht$Age_at_OHT)
+table(oht$Age_at_OHT)
+age_freq<-table(oht$Age_at_OHT)
+hist(oht$Age_at_OHT)
+#to change the color and intervals you need to select the data by the mouse
+hist(oht$Age_at_OHT, main = "Patient's age", xlab = "Age",
+     col = "blue", xaxt = "n", yaxt = "n")
+axis(1, at=seq(0, 100, by=3) , labels= seq(0, 100, by=3), cex.axis=0.75)
+axis(2, at=seq(0, 30, by=5), labels=seq(0, 30, by = 5), cex.axis=0.7)
+summary(oht$Age_at_OHT)
+#---------------21.02.2020------------------------
+install.packages("psych")
+psych::describe(oht$Age_at_OHT)
+#trimmed is equal to mean without 5% of outliers 
+summary(oht$preOHT_Hospital_stay)
+hist(oht$preOHT_Hospital_stay)
+psych::describe(oht$preOHT_Hospital_stay)
+#second class
+psych::describe(oht$OHTurgency_1elective_2urgent_3emergency)
+oht$OHTurgency_1elective_2urgent_3emergency #wywo?anie funkcji
+#the fuction is qualitative due to 
+table(oht$OHTurgency_1elective_2urgent_3emergency)  #grouping the data by categiries -> it is qualitiative varioable
+hist(oht$OHTurgency_1elective_2urgent_3emergency) #create histogram of the following variable
+table(oht$preOHT_Hospital_stay) # it is numerical/ quantitative variabley
+y<-table(oht$OHTurgency_1elective_2urgent_3emergency)
+y
+prop.table(y) #show the frequency of each variable in each group
+round(prop.table(y),2) # cut the number to  given decimals
+urg<-factor(oht$OHTurgency_1elective_2urgent_3emergency,
+            levels = c(1,2,3),
+            labels = c("elective","urgent","emergency")) #create lables for each category 
+urg
+table(urg)# now we have the lablese
+rm(z) #remove an object from the environment
+install.packages("fastDummies")# to create dummy variable
+library(fastDummies)
+u_dummy<-dummy_cols(oht$OHTurgency_1elective_2urgent_3emergency)
+table(u_dummy$.data_2)
+summary((oht$Age_at_OHT))#summary stats for the variable
+age_gr<-cut(oht$Age_at_OHT, br=c(16,35,48,57,72)) #creating 4 quartiles
+table(age_gr)
+boxplot(oht$Age_at_OHT, main = "Patient's Age",ylab = "Age",
+        col = "green", yaxt = "n")
+axis(2, at=seq(0, 80, by=10), labels=seq(0, 80, by = 10), cex.axis=0.7)#box plot do not show the number of people
+boxplot(oht$Age_at_OHT) # simple boxplot
+boxplot(oht$preOHT_Hospital_stay)
+boxplot(oht$preOHT_Hospital_stay ~ oht$ONEy_Mortalityupdate) # boxplot with two variables 
+tapply(oht$preOHT_Hospital_stay, oht$ONEy_Mortalityupdate, psych::describe)# it give us possibility to describe the 2 variables 
+# number of cases
+# we need to show what should be reported either mean or medium 
+#first case had diffretn mean and median so we need to present median, skewnes is not visible
+#how to present % results for the statistics ?
+tapply(oht$Smoker_0no_1yes, oht$ONEy_Mortalityupdate,table)
+table(oht$Gender_0M_1F,oht$Smoker_0no_1yes)
+round(prop.table(table(oht$Gender_0M_1F,oht$Smoker_0no_1yes)),2)
+round(prop.table(table(oht$Gender_0M_1F,oht$Smoker_0no_1yes),1),2)
+round(prop.table(table(oht$Gender_0M_1F,oht$Smoker_0no_1yes),2),2)
+smklist<-factor(oht$Smoker_0no_1yes,
+                levels<-c(0,1),
+                labels=c("nonsmoker","smoker"))
+gender<-factor(oht$Gender_0M_1F,
+                levels<-c(0,1),
+                labels=c("male","female")) 
+round(prop.table(table(gender,smklist),1),2) # perspective of gender (1 digit = perspective, 2 digit = decimal place)
+#(1 digit = perspective, 2 digit = decimal place)
+#gender   nonsmoker smoker
+#male        0.85   0.15
+#female      0.84   0.16
+round(prop.table(table(gender,smklist),2),2) # perspective of smoker
+#gender   nonsmoker smoker
+#male        0.69   0.68
+#female      0.31   0.32
+table(smklist)
+#-----------------28.02.2020-------------------- 
+mortality<-factor(oht$ONEy_Mortalityupdate,
+               levels<-c(0,1),
+               labels=c("survive","dead"))
+round(prop.table(table(mortality, smklist),1),2) # mortality perspective
+round(prop.table(table(mortality, smklist),2),2) # perspective of mortality 
+install.packages("lsr")#instal the pacage of cramer 
+library(lsr)
+#------------------- ending point $%#$#%#$%----
+smokekohort<-table(oht$Smoker_0no_1yes,oht$ONEy_Mortalityupdate)
+tapply(oht$Smoker_0no_1yes,oht$ONEy_Mortalityupdate, describe)
+
+round(prop.table(smokekohort,2),2)
+round(prop.table(smokekohort,1),2)
+#1 step - it seems that the 
+cramersV(smokekohort)
+#2step 
+chisq.test(smokekohort)
+#1step
+#define the types variables 
+# define the approach 
+library(psych)
+tapply(oht$Age_at_OHT,oht$Gender_0M_1F, psych::describe)
+#we use mean because mean is not far from the median and skew is not big 
+# 0 - male, and 1 was women , 0 = male (M = 47, 07; SD = 13.69), 1 = women (M= 42,82; SD: 13,92)
+#find the association betwen variables quantitative and qualitative = COHEN'S d test
+
+#cohends d 
+cohen.d(oht$Age_at_OHT,oht$Gender_0M_1F)
+#Multivariate (Mahalanobis) distance between groups 0.31, 
+tapply(oht$preOHT_Hospital_stay,oht$ONEy_Mortalityupdate,psych::describe)
+#we use the median and quartile = use summury
+tapply(oht$preOHT_Hospital_stay,oht$ONEy_Mortalityupdate, summary)
+# it will help us to make ranks 
+#no means, no SD. 
+#preop and level and level of mg, if NA remove no anserws
+mean(oht$preopBloodTest_Mg,na.rm =TRUE)
+#to create subset YOU NEED:
+
+iqvia<-readxl::read_xlsx("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\IQVIA data sample_HEBDA.xlsx", sheet = 2)
+#LOOKOUT ON THE NUMBER of sheet that you refer it to 
+
+#SUBSET 
+
+sanofi<-subset(iqvia, Corporation =="SANOFI")
+names(iqvia)
+table(iqvia$Corporation)
+
+#Create subset with 2 companies
+
+#creating a subset using two or more levels of one variable
+sanofi_orion<-subset(iqvia, Corporation == "SANOFI" | Corporation == "ORION")
+table(sanofi_orion$Corporation)
+# | in function stands with OR function 
+
+#ORION & Dolnosl?skie
+
+voivodeship_corpor<-subset(iqvia, Corporation == "ORION" & Voivodeship == "Dolnoslaskie")
+table(voivodeship_corpor$Corporation,voivodeship_corpor$Voivodeship)
+
+# extract SALES VALUE from subset with 2 values
+
+summary(voivodeship_corpor$SalesValue)
+describe(voivodeship_corpor$SalesValue)
+hist(voivodeship_corpor$SalesValue)
+
+voivodeship_sale<-subset(iqvia, Voivodeship == "Dolnoslaskie")
+table(iqvia$Voivodeship)
+describe(voivodeship_sale$SalesValue)
+hist(voivodeship_sale$SalesValue)
+
+# if age is or is not potential risk factor of survival 
+tapply(oht$Age_at_OHT,oht$ONEy_Mortalityupdate,psych::describe)
+# for parrametric tests we need the groups are equal or simmilar. 
+#so we need to use mean analisis - parametric test 
+#we need to use boxplot - they are showing the outliers 
+#seing the difference between 
+boxplot(oht$Age_at_OHT~oht$ONEy_Mortalityupdate)
+#avarege people who dieded  were on avarege older
+# for means comparasation was cohen.d
+cohen.d(oht$Age_at_OHT,oht$ONEy_Mortalityupdate)
+#Call: cohen.d(x = oht$Age_at_OHT, group = oht$ONEy_Mortalityupdate)
+#Cohen d statistic of difference between two means
+#lower effect upper
+#[1,] -0.07   0.31  0.69 - 0.31 is a low association
+#----------------------------------- 06/03/2020------------------------
+farmacies<-readxl::read_xlsx("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\Pharmacies.xlsx", sheet = 2)
+#creat anova from the dataset
+aaan<-aov(farmacies$BrandB~farmacies$Region)
+summary(aaan)
+#                 Df Sum Sq Mean Sq F value Pr(>F)  
+#farmacies$Region  1  0.986  0.9865   6.592 0.0138 *
+ # Residuals        43  6.434  0.1496
+0.986/(0.986+6.434)
+#0.1328841 = eta squared 
+#region in which pharam was locaced expalains about 13 % of the variance of the variance ( is asociated with)
+
+
+# Pr(F) = P value - this is a probablility of us making a mistake, while saying that there is association between variables 
+#in population from the samle which we ook from. 
+
+# acceptable value of p value would be 0.05 or less it means that something is statistically significant 
+tapply(farmacies$BrandA,farmacies$Region,psych::describe)
+aaa2<-aov(farmacies$BrandA~farmacies$Region)
+summary(aaa2)
+1.03/(1.03+19.30)
+#eta squared = 0.05066404
+# even with the means between the groups is the same, the squared sum (spread) within the group is bigger it
+#has a tremendous impact on the outcomes
+#creating subset
+brandbregion<-subset(farmacies, Region == 3)
+#t test building
+t.test(brandbregion$BrandB)
+#data:  brandbregion$BrandB
+#t = 16.112, df = 14, p-value = 1.968e-10
+#alternative hypothesis: true mean is not equal to 0
+#95 percent confidence interval:
+ # 1.944134 2.541199
+#sample estimates:
+ # mean of x 
+#2.242667 
+
+#Interval  (1,944<M<2,541 ) = 0,95
+#-------------------------13.03.2020--------------
+atenolol<-subset(iqvia, Corporation =="ATENOLOL")
+names(iqvia)
+table(iqvia$Corporation)
+aten3V<-subset(iqvia, Brand=="ATENOLOL"&
+                 (Voivodeship == "Malopolskie" | Voivodeship == "Dolnoslaskie" | Voivodeship == "Swietokrzyskie"))
+
+#we want to check strenght of association of sales unit and sales value
+
+#1st we have 2 quantitative variable 
+
+#2nd step chceck the normality distribution 
+#3rd  2) graph (e.g. histogram) 3) shapiro wilk for 2 quantitative variables
+psych::describe(aten3V$SalesUnits)
+shapiro.test(aten3V$SalesUnits)
+psych::describe(aten3V$SalesValue) 
+shapiro.test(aten3V$SalesValue)
+hist(aten3V$SalesValue)
+# if p value is very low( close to zero) it means that the distribution ins significantly diffrent than normal 
+#our p value is low, and the distriubution, but neither has no normal distriubution 
+#we go for spearman raw 
+cor(x=aten3V$SalesUnits, y=aten3V$SalesValue)
+cor(x=aten3V$SalesUnits,aten3V$SalesValue, method = "spearman")
+# the more units were sold the more sale value acquired
+
+anscombe
+#data set included in R studio
+
+#try cor test between variables
+cor(anscombe$x1,anscombe$y1)
+cor(anscombe$x2,anscombe$y2)
+cor(anscombe$x3,anscombe$y3)
+cor(anscombe$x4,anscombe$y4)
+plot(anscombe$x4,anscombe$y4)
+###-----------------------------------------------18.03.2020
+acebut <-subset(iqvia, Molecule=='ACEBUTOLOL')
+head(acebut)
+acebut$Molecule
+library(psych)
+tapply(acebut$SalesUnits,acebut$CopaymentLevel, describe)
+tapply(acebut$SalesUnits,acebut$CopaymentLevel, hist)
+tapply(acebut$SalesUnits,acebut$CopaymentLevel, boxplot)
+boxplot(acebut$SalesUnits~acebut$CopaymentLevel)
+describeBy(acebut$SalesUnits, group=acebut$CopaymentLevel)
+#mean and median v. different - nonparametric
+kruskal.test(acebut$SalesUnits~acebut$CopaymentLevel)
+(411.57-4)/(sum(complete.cases(acebut$SalesValue))-4)
+#there is association!!! copayment levels have a strong
+#(H(3) = 411.57, p < 0.001) 
+#0.2091175 - the copeiment level explains 21 % of the variation of Sales Unit in the data set
+#------------------23.03.2020
+install.packages("readxl")
+library(readxl)
+eucontries<-readxl::read_xls("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\EU_data_hlth.xls")
+companyx<-readxl::read_xlsx("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\Company+X.xlsx")
+describe(eucontries$HealthcareEXP_GDP)
+#we use spearman raw test non parametric after analizing the distribution 
+#it show the monotonic association - > one rise and the secound is going dow or getting high
+#the association between two quantitative is called linear association
+#1 the association was moderate and positive
+#2 the higher was the country  GDP the higher was the persentege of citizens assesing their 
+#healt is very good
+subcompany1<-subset(companyx, dep =="marketing department" & voivodeship == "Lesser Poland")
+#asses association between lengh of working and their sallary 
+# both variable are the quantitative 
+shapiro.test(subcompany1$seniority)
+shapiro.test(subcompany1$wage_dol)
+#both has the normal distirbution
+plot(subcompany1$seniority, subcompany1$wage_dol)
+cor(subcompany1$seniority, subcompany1$wage_dol)
+# the association is moderate, the more years the workers earn the more they earn 
+#we want to know by how much on avarege i earn 
+# we create linear regresion - quantitative variable and Dummy variables 
+#independent variable = predictor ONE or MANY + ONE dependent variable
+#####object_name<-lm(dep_variable~predictor)
+regression1<-lm(subcompany1$wage_dol~subcompany1$seniority)
+regression1
+summary(regression1)
+#r2 in 40 percent the thing that people were differ in wages, it beacause of the seniority
+# F-statistic: 9.023 on 1(variable) and 14 (number of observations - parameters of the models)DF, 
+#p-value: 0.00948
+#F(1;14) = 9.023 , p = 0.009 
+scatter.smooth(x= subcompany1$seniority, y=subcompany1$wage_do, main = "Wage vs Seniority")
+install.packages("QuantPsyc")
+library(QuantPsyc)
+#need to calculate standardized coefficient
+lm.beta(regression1)
+#0.6260256 if we have more predictors in analises we use standardized coefficients to compare the strenght of association 
+#of the predictors with the dependend variable
+plot(subcompany1$seniority,subcompany1$wage_dol, main = 'Wage against seniority',
+     xlab = 'Seniority', ylab = 'Wage in $')
+require(stats)
+
+
+
+#HOMEWORK - try to do analises if it possible to incude performance varible for the data set
+#we need to check association between predictors - correlation matrix
+regression1<-lm(subcompany1$wage_dol~subcompany1$seniority)
+abline(lm(subcompany1$wage_dol ~ subcompany1$seniority), col = "green")
+#the difference between the reale point and the line i the residuals(errors)
+#homogenity of variances (imilar variances in groups)
+plot(subcompany1$seniority,subcompany1$wage_dol)
+regression1
+summary(regression1)
+correlationmatrix1<-subcompany1[c(5,6,9)]
+cor(correlationmatrix1)
+round(cor(correlationmatrix1),2)
+plot(correlationmatrix1)
+regression2<-lm(subcompany1$wage_dol~subcompany1$seniority+subcompany1$perf)
+summary(regression2)
+lm.beta(regression2)
+cor.test(subcompany1$seniority, subcompany1$perf, conf.level = 0.22)
+help(cor.test)
+# 0.63 correlation unstandardized  meaning - if you have thwo predictors in the models, seniority -> coefficient for the seniority, for two people havig the same performance, 
+# the one that works one year more, the one earns 62 $ more
+##-----------------------25.03.2002
+
+#homogenity of variances (imilar variances in groups)
+#we determine to check the variance to find out heteroscedacity - much difference in the 
+#variances
+# 2 we want to check if the correlation is linear
+# 3 if we have outliers, therir error is much bigger that the normal residuals has 
+
+#analisys scatter plot for the gender vs wages
+plot(subcompany1$gender,subcompany1$wage_dol)
+abline(lm(subcompany1$wage_dol ~ subcompany1$gender), col = "green")
+tapply(subcompany1$wage_dol, subcompany1$gender, describe)
+#for the dychotomus variable and dependent variable is quantitative R2 is the same 
+#eta squared
+
+# calculate eta squared and R squared?
+
+#logistic regression 
+#odds ratos - odds they are a chances as ration of chance that A to 
+#have number to cases that have B 
+table(oht$Stroke_TIA_0no_1yes,oht$ONEy_Mortalityupdate)
+round(prop.table(table(oht$ONEy_Mortalityupdate,oht$Stroke_TIA_0no_1yes),1),2)
+#people who had not the stroke = 25 / 97  = 0,257 = odds ratio
+#people who had stroke  12/9 =  1,33 = odds ratio 
+# people who had stroke has a 5,17 greater chance to die 
+#insead those who had not within 1 year. 
+lrMod<-glm(oht$ONEy_Mortalityupdate~oht$Stroke_TIA_0no_1yes, )
+summary(lrMod)
+#AIC = it is to the measure to compare coeficenty which model is better once the predictor 
+#is being added
+exp(coef(lrMod))
