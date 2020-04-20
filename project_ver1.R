@@ -1,14 +1,32 @@
 project <- read.csv("D:\\Studia\\Magisterskie_HEBDA\\Biostatistics\\Project biostatistics\\insurance.csv")
 install.packages("psych")
 library(psych)
+
+install.packages("dplyr")
+library(dplyr)
+install.packages("Hmisc")
+library(Hmisc)
+install.packages("cowplot")
+library(cowplot)
+
+install.packages("WVPlots")
+library(WVPlots)
+
+install.packages("fastDummies")# to create dummy variable
+library(fastDummies)
+
+
+install.packages("tidyverse")
+library(tidyverse)
+
+
 psych::describe(project$age) 
 hist(project$age)
 psych::describe(project$bmi)
 hist(project$bmi)
 psych::describe(project$charges)
 hist(project$charges)
-install.packages("fastDummies")# to create dummy variable
-library(fastDummies)
+
 gender<-factor(project$sex,
             levels <- c("female","male"),
             labels = c(0,1)) #create lables for each category
@@ -48,8 +66,7 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 hist(underweight)
 qqnorm(underweight)
 qqline(underweight)#show the distribution of real quantiles vs the predicted ones 
-install.packages("tidyverse")
-library(tidyverse) #cannot install it ? 
+ #cannot install it ? 
 
 ## plot carges vs bmi with respect to BMI intervals
 ggplot(data=project) +
@@ -58,16 +75,6 @@ ggplot(data=project) +
 ## plot charges vs age
 ggplot(data=project, mapping = aes(x=age, y=charges))+
     geom_point(alpha=1/5)
-
-install.packages("dplyr")
-library(dplyr)
-install.packages("Hmisc")
-library(Hmisc)
-install.packages("cowplot")
-library(cowplot)
-
-install.packages("WVPlots")
-library(WVPlots)
 
 x <- ggplot(project, aes(x=age, y=charges)) +
   geom_jitter(color = "blue", alpha = 0.5) +
@@ -85,7 +92,7 @@ plot_grid(title, p, ncol=1, rel_heights=c(0.1, 1))
 ggplot(data=project)+
   geom_point(mapping = aes(x=BMIth == "obese", y=charges))
 
-plot(BMIth == "obese", project$charges, na.rm = TRUE))
+plot(BMIth == "obese", project$charges, na.rm = TRUE)
 
 cbPalette #gray color scale  to use for scatter plot for AGE VS charges
 
